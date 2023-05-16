@@ -23,6 +23,7 @@ resource "hcloud_server" "axion" {
   server_type       = var.server_type
   backups           = true
   delete_protection = false
+  firewall_ids      = [hcloud_firewall.axion-firewall.id]
   ssh_keys          = hcloud_ssh_key.axion-ssh.id
   user_data         = file("cloud-init/cloud-init.yaml")
 
@@ -33,6 +34,20 @@ resource "hcloud_server" "axion" {
 
   labels = {
     name = var.server_name
+  }
+}
+
+resource "hcloud_firewall" "axion-firewall" {
+  name = "axion-firewall"
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = var.firewall_in_port
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
   }
 }
 
