@@ -2,7 +2,7 @@ terraform {
   required_providers {
     hcloud = {
       source  = "hetznercloud/hcloud"
-      version = "~1.38.2"
+      version = "1.38.2"
     }
   }
 }
@@ -23,9 +23,8 @@ resource "hcloud_server" "axion" {
   server_type       = var.server_type
   backups           = true
   delete_protection = false
-  firewall_ids      = [hcloud_firewall.axion-firewall.id]
-  ssh_keys          = hcloud_ssh_key.axion-ssh.id
-  user_data         = file("cloud-init/cloud-init.yaml")
+  ssh_keys          = [hcloud_ssh_key.axion-ssh.id]
+  user_data         = file("../cloud-init/cloud-init.yaml")
 
   public_net {
     ipv4_enabled = true
@@ -37,26 +36,11 @@ resource "hcloud_server" "axion" {
   }
 }
 
-resource "hcloud_firewall" "axion-firewall" {
-  name = "axion-firewall"
-
-  rule {
-    direction = "in"
-    protocol  = "tcp"
-    port      = var.firewall_in_port
-    source_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-}
-
 # TODO: Volume backup
 
 resource "hcloud_volume" "axion-root" {
   name              = var.volume_name
   size              = var.volume_size
-  location          = var.volume_location
   server_id         = hcloud_server.axion.id
   automount         = true
   format            = var.volume_format

@@ -1,0 +1,39 @@
+#cloud-config
+hostname: axion-1
+users:
+  - name: axn
+    groups: sudo
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICjqDHB6Y6ihRVKQqfLpQUvYbMgu2DDDmlzvqU+lIU54 khushmeet@hey.com
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg-agent
+  - software-properties-common
+  - fail2ban
+
+runcmd:
+  - [ sed, -i, -e, '/^#Port/s/^.*$/Port 43/', /etc/ssh/sshd_config ]
+  - [ sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
+  - [ sed, -i, -e, '/^#PasswordAuthentication/s/^.*$/PasswordAuthentication no/', /etc/ssh/sshd_config ]
+  - [ sed, -i, -e, '/^#PubkeyAuthentication/s/^.*$/PubkeyAuthentication yes/', /etc/ssh/sshd_config ]
+  - [ sh, -c, "echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config" ]
+  - [ systemctl, reload, sshd ]
+  - [ install, -m, '0755', -d, /etc/apt/keyrings ]
+  - [ sh, -c, "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg" ]
+  - [ chmod, a+r, /etc/apt/keyrings/docker.gpg ]
+  - [ sh, -c, 'echo "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null' ]
+  - [ apt, update, -y ]
+  - [ apt, install, -y, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
+
+power_state:
+  timeout: 300
+  message: Rebooting in 5 minutes. Please save your work.
+  mode: reboot

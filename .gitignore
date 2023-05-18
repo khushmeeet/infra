@@ -1,1 +1,6 @@
-terraform/secrets.tfvars
+secrets.tfvars
+.terraform/
+.terraform.*
+*.tfstate
+*.tfstate.*
+*/plan
