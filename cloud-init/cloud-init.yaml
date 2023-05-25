@@ -19,6 +19,23 @@ packages:
   - software-properties-common
   - fail2ban
 
+write_files:
+  - path: /home/axn/.bash_profile
+    owner: 'axn'
+    permissions: '0644'
+    content: |
+      PS1="\[$(tput smul)$(tput bold)$(tput setaf 3)$(tput setab 0)\]\u@\h\[$(tput rmul)\]\[$(tput bold)$(tput setaf 3)$(tput setab 0)\]:\[$(tput rev)\]\w\[$(tput sgrO)$(tput bold)$(tput setaf 3)$(tput setab 0)\] [\!-\#] \t ->\[$(tput sgr0)\] "
+      ulimit -c unlimited
+      umask 022
+      set -o vi
+      alias ls="/bin/ls -GFC"
+      alias ll="/bin/ls -6x"
+      alias c="clear"
+      alias d="date"
+      id
+      ps x
+
+
 runcmd:
   - [ sed, -i, -e, '/^#Port/s/^.*$/Port 43/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
