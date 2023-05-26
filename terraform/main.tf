@@ -19,7 +19,7 @@ provider "hcloud" {
 
 resource "hcloud_ssh_key" "axion-ssh" {
   name       = "Axion SSH Key"
-  public_key = file("~/.ssh/id_ed25519.pub")
+  public_key = file("../ssh/id_ed25519.pub")
 }
 
 resource "hcloud_server" "axion" {
