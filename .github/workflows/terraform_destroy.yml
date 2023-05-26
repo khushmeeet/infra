@@ -1,0 +1,25 @@
+name: Infra Setup using Terraform
+run-name: Destroy infra
+on: workflow_dispatch
+env:
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+jobs:
+  terraform:
+    name: Destroy Terraform Infra
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job is running on ${{ runner.os }}"
+      - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
+      - name: Terraform init
+        id: init
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+        working-directory: terraform
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}"
+        working-directory: terraform
