@@ -1,4 +1,4 @@
-name: Infra Setup using Terraform
+name: Infra Destroy
 run-name: Destroy infra
 on: workflow_dispatch
 env:

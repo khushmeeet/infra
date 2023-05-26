@@ -1,4 +1,4 @@
-name: Infra Setup using Terraform
+name: Infra Setup
 run-name: Create infra
 on: workflow_dispatch
 env:
