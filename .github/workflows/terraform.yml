@@ -2,7 +2,7 @@ name: Infra Setup using Terraform
 run-name: Create infra
 on: workflow_dispatch
 env:
-  hcloud_token: ${{ secrets.hcloud_token}}
+  hcloud_token: ${{ secrets.HCLOUD_TOKEN}}
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
 jobs:
   terraform:
