@@ -10,8 +10,12 @@ jobs:
   terraform:
     name: Run Terraform Infra
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform
     steps:
-      - run: echo "Job is running on a ${{ runner.os }}"
+      - run: echo "Job is running on ${{ runner.os }}"
       - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -20,23 +24,18 @@ jobs:
       - name: Terraform init
         id: init
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
-        working-directory: terraform
       - name: Terraform format
         id: fmt
         run: terraform fmt -check
-        working-directory: terraform
       - name: Terraform validate
         id: validate
         run: terraform validate
-        working-directory: terraform
       - name: Terraform plan
         id: plan
         run: terraform plan -no-color -input=false
         continue-on-error: true
-        working-directory: terraform
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
-        working-directory: terraform
