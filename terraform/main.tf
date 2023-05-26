@@ -5,6 +5,12 @@ terraform {
       version = "1.38.2"
     }
   }
+
+  backend "s3" {
+    bucket = "tf-axion-infra-state"
+    key    = "tf/state/infra.tfstate"
+    region = "us-west-1"
+  }
 }
 
 provider "hcloud" {
@@ -24,7 +30,7 @@ resource "hcloud_server" "axion" {
   backups           = true
   delete_protection = false
   ssh_keys          = [hcloud_ssh_key.axion-ssh.id]
-  user_data         = file("../cloud-init/cloud-init.yaml")
+  user_data         = file("../cloud-init/cloud-init.yml")
 
   public_net {
     ipv4_enabled = true
