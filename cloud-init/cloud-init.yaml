@@ -19,24 +19,19 @@ packages:
   - software-properties-common
   - fail2ban
 
-write_files:
-  - path: /home/axn/.bash_profile
-    owner: 'axn'
-    permissions: '0644'
-    content: |
-      PS1="\[$(tput smul)$(tput bold)$(tput setaf 3)$(tput setab 0)\]\u@\h\[$(tput rmul)\]\[$(tput bold)$(tput setaf 3)$(tput setab 0)\]:\[$(tput rev)\]\w\[$(tput sgrO)$(tput bold)$(tput setaf 3)$(tput setab 0)\] [\!-\#] \t ->\[$(tput sgr0)\] "
-      ulimit -c unlimited
-      umask 022
-      set -o vi
-      alias ls="/bin/ls -GFC"
-      alias ll="/bin/ls -6x"
-      alias c="clear"
-      alias d="date"
-      id
-      ps x
-
-
 runcmd:
+  - |
+    echo 'PS1="\[$(tput smul)$(tput bold)$(tput setaf 3)$(tput setab 0)\]\u@\h\[$(tput rmul)\]\[$(tput bold)$(tput setaf 3)$(tput setab 0)\]:\[$(tput rev)\]\w [\$(date +%H:%M:%S)] ->\[$(tput sgr0)\] "' >> /home/axn/.bash_profile
+    echo 'ulimit -c unlimited' >> /home/axn/.bash_profile
+    echo 'umask 022' >> /home/axn/.bash_profile
+    echo 'set -o vi' >> /home/axn/.bash_profile
+    echo 'alias ls="/bin/ls -GFC"' >> /home/axn/.bash_profile
+    echo 'alias ll="/bin/ls -6x"' >> /home/axn/.bash_profile
+    echo 'alias c="clear"' >> /home/axn/.bash_profile
+    echo 'alias d="date"' >> /home/axn/.bash_profile
+    echo 'id' >> /home/axn/.bash_profile
+    echo 'ps x' >> /home/axn/.bash_profile
+    chown axn:axn /home/axn/.bash_profile
   - [ sed, -i, -e, '/^#Port/s/^.*$/Port 43/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PasswordAuthentication/s/^.*$/PasswordAuthentication no/', /etc/ssh/sshd_config ]
@@ -52,5 +47,5 @@ runcmd:
 
 power_state:
   timeout: 300
-  message: Rebooting in 5 minutes. Please save your work.
+  message: Rebooting in 5 minutes.
   mode: reboot
