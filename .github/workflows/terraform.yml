@@ -2,7 +2,6 @@ name: Infra Setup using Terraform
 run-name: Create infra
 on: workflow_dispatch
 env:
-  hcloud_token: ${{ secrets.HCLOUD_TOKEN}}
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
   AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -31,7 +30,7 @@ jobs:
         working-directory: terraform
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color -input=false
+        run: terraform plan -no-color -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}"
         continue-on-error: true
         working-directory: terraform
       - name: Terraform Plan Status
