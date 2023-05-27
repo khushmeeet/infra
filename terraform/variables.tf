@@ -3,6 +3,11 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
+variable "tailscale_key" {
+  description = "Value of tailscale_key to connect to Tailscale"
+  sensitive   = true
+}
+
 variable "server_name" {
   description = "Name of the VM to connect"
   default     = "axion-1"

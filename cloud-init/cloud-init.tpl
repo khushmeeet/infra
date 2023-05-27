@@ -37,13 +37,24 @@ runcmd:
   - [ sed, -i, -e, '/^#PasswordAuthentication/s/^.*$/PasswordAuthentication no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PubkeyAuthentication/s/^.*$/PubkeyAuthentication yes/', /etc/ssh/sshd_config ]
   - [ sh, -c, "echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config" ]
-  - [ systemctl, reload, sshd ]
   - [ install, -m, '0755', -d, /etc/apt/keyrings ]
   - [ sh, -c, "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg" ]
   - [ chmod, a+r, /etc/apt/keyrings/docker.gpg ]
   - [ sh, -c, 'echo "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null' ]
+  - [ sh, -c, "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null" ]
+  - [ sh, -c, "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list" ]
   - [ apt, update, -y ]
-  - [ apt, install, -y, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
+  - [ apt, install -y, tailscale, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
+  - [ tailscale, up, -authkey, ${tailscale_key} ]
+  - [ ufw, allow, in, on, tailscale0 ]
+  - [ ufw, enable ]
+  - [ ufw, default, deny, incoming ]
+  - [ ufw, default, allow, outgoing ]
+  - [ ufw, reload ]
+  - [ systemctl, reload, sshd ]
+
+
+
 
 power_state:
   timeout: 300

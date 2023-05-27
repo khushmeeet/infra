@@ -30,12 +30,12 @@ jobs:
         working-directory: terraform
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}"
+        run: terraform plan -no-color -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
         continue-on-error: true
         working-directory: terraform
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}"
+        run: terraform apply -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
         working-directory: terraform

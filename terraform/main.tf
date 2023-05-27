@@ -30,7 +30,9 @@ resource "hcloud_server" "axion" {
   backups           = true
   delete_protection = false
   ssh_keys          = [hcloud_ssh_key.axion-ssh.id]
-  user_data         = file("../cloud-init/cloud-init.yml")
+  user_data         = templatefile("../cloud-init/cloud-init.tpl", {
+    tailscale_key = var.tailscale_key
+  })
 
   public_net {
     ipv4_enabled = true
