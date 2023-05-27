@@ -21,5 +21,5 @@ jobs:
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
         working-directory: terraform
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}
+        run: terraform destroy -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
         working-directory: terraform
