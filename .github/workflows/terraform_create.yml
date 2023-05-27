@@ -35,3 +35,6 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
         working-directory: terraform
+      - name: Sleep for 5 minutes while server reboots
+        run: sleep 5m
+        shell: bash
