@@ -44,7 +44,7 @@ runcmd:
   - [ sh, -c, "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null" ]
   - [ sh, -c, "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list" ]
   - [ apt, update, -y ]
-  - [ apt, install -y, tailscale, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
+  - [ apt, install, -y, tailscale, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
   - [ tailscale, up, -authkey, ${tailscale_key} ]
 
 power_state:
