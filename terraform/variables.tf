@@ -28,11 +28,6 @@ variable "server_type" {
   default     = "cx21"
 }
 
-variable "firewall_in_port" {
-  description = "Port of the 'in rule' firewall port in Hetzner Cloud"
-  default     = "8080"
-}
-
 variable "volume_name" {
   description = "Name of the volume in  Hetzner Cloud"
   default     = "axion-root"
