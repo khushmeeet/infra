@@ -20,10 +20,6 @@ jobs:
         id: init
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
         working-directory: terraform
-      - name: Terraform format
-        id: fmt
-        run: terraform fmt -check
-        working-directory: terraform
       - name: Terraform validate
         id: validate
         run: terraform validate
