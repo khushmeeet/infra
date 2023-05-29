@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = var.tf_state_bucket
+    bucket = "tf-axion-infra-state"
     key    = "aws/infra.tfstate"
-    region = var.aws_region
+    region = "us-west-1"
   }
 }
 
