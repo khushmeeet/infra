@@ -4,30 +4,48 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_USER: example
-      POSTGRES_DB: example
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-          test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U docker -d gis"
+      test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+      interval: 1m
+      timeout: 10s
+      retries: 5
 
   pgadmin:
-      container_name: pgadmin
-      image: dpage/pgadmin4:latest
-      environment:
-        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-      volumes:
-          - pgadmin:/var/lib/pgadmin
-      ports:
-        - "5050:80"
-      depends_on:
-        - db
-      restart: always
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: always
+
+  pg_backup:
+    container_name: pg_backup
+    image: ${IMAGE_URI}
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      - db
+    restart: always
 
 volumes:
   pgdata:
+    driver: local
+  pgadmin:
     driver: local
