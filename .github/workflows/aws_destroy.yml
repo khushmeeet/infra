@@ -1,0 +1,30 @@
+name: AWS Tooling Destroy
+run-name: Destroy AWS Tooling infra
+on: workflow_dispatch
+env:
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+jobs:
+  terraform:
+    name: Destroy Create AWS Tooling infra
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job is running on ${{ runner.os }}"
+      - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
+      - name: Terraform init
+        id: init
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+        working-directory: aws
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+        working-directory: aws
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -input=false
+        working-directory: aws
+      - run: echo "Job is ${{ job.status }}."

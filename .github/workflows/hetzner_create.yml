@@ -1,13 +1,13 @@
-name: Infra Setup
-run-name: Create infra
+name: Hetzner Setup
+run-name: Create hetzner infra
 on: workflow_dispatch
 env:
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
-  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
   terraform:
-    name: Create Terraform Infra
+    name: Create Hetzner Infra
     runs-on: ubuntu-latest
     steps:
       - run: echo "Job is running on ${{ runner.os }}"
@@ -38,3 +38,4 @@ jobs:
       - name: Sleep for 2 minutes while server reboots
         run: sleep 2m
         shell: bash
+      - run: echo "Job is ${{ job.status }}."

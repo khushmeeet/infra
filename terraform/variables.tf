@@ -3,6 +3,15 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
+variable "aws_region" {
+  description = "Value of aws region for storing tf state in S3"
+  default     = "us-west-1"
+}
+
+variable "tf_state_bucket" {
+  description = "Bucket name for terraform state file"
+  default     = "tf-axion-infra-state"
+}
 variable "tailscale_key" {
   description = "Value of tailscale_key to connect to Tailscale"
   sensitive   = true

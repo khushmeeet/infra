@@ -1,13 +1,13 @@
-name: Infra Destroy
-run-name: Destroy infra
+name: Hetzner Destroy
+run-name: Destroy hetzner infra
 on: workflow_dispatch
 env:
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
-  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
   terraform:
-    name: Destroy Terraform Infra
+    name: Destroy Hetzner Infra
     runs-on: ubuntu-latest
     steps:
       - run: echo "Job is running on ${{ runner.os }}"
@@ -20,6 +20,11 @@ jobs:
         id: init
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
         working-directory: terraform
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+        working-directory: terraform
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
         working-directory: terraform
+      - run: echo "Job is ${{ job.status }}."
