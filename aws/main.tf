@@ -51,7 +51,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket1_sse" {
 resource "aws_ecr_repository" "ecr" {
   name                 = var.ecr_name
   image_tag_mutability = "MUTABLE"
-  encryption_type      = "KMS"
+  encryption_configuration {
+    encryption_type = "KMS"
+  }
 
   image_scanning_configuration {
     scan_on_push = true
