@@ -16,6 +16,7 @@ services:
       interval: 1m
       timeout: 10s
       retries: 5
+      start_period: 1m
 
   pgadmin:
     container_name: pgadmin
@@ -38,11 +39,12 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:80"
+          "http://127.0.0.1:80"
         ]
       interval: 30s
       timeout: 5s
       retries: 5
+      start_period: 1m
 
   pg_backup:
     container_name: pg_backup
@@ -57,8 +59,35 @@ services:
       - db
     restart: always
 
+  portainer:
+    image: portainer/portainer-ce
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1:9000"
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 1m
+
 volumes:
   pgdata:
     driver: local
   pgadmin:
+    driver: local
+  portainer_data:
     driver: local
