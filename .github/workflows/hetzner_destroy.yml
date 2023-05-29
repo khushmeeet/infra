@@ -19,12 +19,12 @@ jobs:
       - name: Terraform init
         id: init
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
-        working-directory: terraform
+        working-directory: hetzner
       - name: Terraform validate
         id: validate
         run: terraform validate
-        working-directory: terraform
+        working-directory: hetzner
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -input=false -var "hcloud_token=${{ secrets.HCLOUD_TOKEN }}" -var "tailscale_key=${{ secrets.TAILSCALE_KEY }}"
-        working-directory: terraform
+        working-directory: hetzner
       - run: echo "Job is ${{ job.status }}."

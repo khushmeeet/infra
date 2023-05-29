@@ -24,7 +24,7 @@ variable "server_name" {
 
 variable "server_location" {
   description = "Location of the VM in Hetzner Cloud"
-  default     = "nbg1"
+  default     = "fsn1"
 }
 
 variable "server_image" {
@@ -34,7 +34,7 @@ variable "server_image" {
 
 variable "server_type" {
   description = "Type of instance based on CPU and RAM"
-  default     = "cx21"
+  default     = "cax11"
 }
 
 variable "volume_name" {
