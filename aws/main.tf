@@ -48,6 +48,35 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket1_sse" {
   }
 }
 
+resource "aws_s3_bucket" "bucket2" {
+  bucket = var.dogsheep_bucket
+}
+
+resource "aws_s3_bucket_public_access_block" "bucket2_access" {
+  bucket                  = aws_s3_bucket.bucket2.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_versioning" "bucket2_versioning" {
+  bucket = aws_s3_bucket.bucket2.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "bucket2_sse" {
+  bucket = aws_s3_bucket.bucket2.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_ecr_repository" "ecr" {
   name                 = var.ecr_name
   image_tag_mutability = "MUTABLE"

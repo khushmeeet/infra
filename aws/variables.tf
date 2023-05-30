@@ -18,6 +18,11 @@ variable "pg_backup_bucket" {
   default     = "infra-pg-backup"
 }
 
+variable "dogsheep_bucket" {
+  description = "Bucket name for datasette dogsheep db files"
+  default     = "dogsheep-db"
+}
+
 variable "ecr_name" {
   description = "AWS ECR repository name"
   default     = "infra-cr"
