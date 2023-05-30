@@ -18,6 +18,13 @@ services:
       retries: 5
       start_period: 1m
 
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@${POSTGRES_HOST}:5432/mydatabase?sslmode=disable
+    ports:
+      - 9187:9187
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
@@ -59,6 +66,23 @@ services:
       - db
     restart: always
 
+  datasette:
+    image: axion-datasette
+    command:
+      [
+        "datasette",
+        "-h",
+        "0.0.0.0",
+        "/mnt/dbs",
+        "-m",
+        "/mnt/metadata/metadata.yml"
+      ]
+    ports:
+      - 8001:8001
+    volumes:
+      - /var/datasette/dbs:/mnt/dbs
+      - /var/metadata:/mnt/metadata
+
   portainer:
     image: portainer/portainer-ce
     command: -H unix:///var/run/docker.sock
@@ -84,10 +108,45 @@ services:
       retries: 3
       start_period: 1m
 
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:9090" ]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000" ]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
 volumes:
   pgdata:
     driver: local
   pgadmin:
     driver: local
   portainer_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus-data:
     driver: local
