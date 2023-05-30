@@ -1,0 +1,36 @@
+plugins:
+  datasette-dashboards:
+    dogsheep-dashboard:
+      title: Dogsheep Dashboard
+      description: Metrics and trends from personal data
+
+  datasette-render-markdown:
+    patterns:
+      - "*_markdown"
+      - "*_md"
+    extra_tags:
+      - "hr"
+      - "br"
+      - "details"
+      - "summary"
+      - "input"
+    extra_attrs:
+      input:
+        - "type"
+        - "disabled"
+        - "checked"
+    extensions:
+      - "mdx_gfm:GithubFlavoredMarkdownExtension"
+
+  datasette-media:
+    photo:
+      - sql: ""
+
+  datasette-redirect-to-https:
+    if_headers:
+      x-forwarded-proto: "http"
+
+  dogsheep-beta:
+    database: "beta"
+    config_file: "dogsheep-beta.yml"
+    template_debug: true

@@ -1,0 +1,18 @@
+# sample file
+twitter.db:
+  tweets:
+    sql: |-
+      select
+          tweets.id as key,
+          'Tweet by @' || users.screen_name as title,
+          tweets.created_at as timestamp,
+          tweets.full_text as search_1
+      from tweets join users on tweets.user = users.id
+  users:
+    sql: |-
+      select
+          id as key,
+          name || ' @' || screen_name as title,
+          created_at as timestamp,
+          description as search_1
+      from users

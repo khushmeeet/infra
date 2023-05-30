@@ -1,0 +1,29 @@
+name: Datasette Docker Image
+run-name: Datasette Docker Image
+on: workflow_dispatch
+jobs:
+  datasette:
+    name: Create datasette docker image
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job is running on ${{ runner.os }}"
+      - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./dogsheep/Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/dogsheep:latest
+      - run: echo "Job is ${{ job.status }}."
