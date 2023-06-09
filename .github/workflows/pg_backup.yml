@@ -30,7 +30,7 @@ jobs:
         id: build-image
         uses: docker/build-push-action@v2
         with:
-          context: ./pg_backup/Dockerfile
+          context: ./pg_backup/
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/pg_backup:latest
           build-args: |
