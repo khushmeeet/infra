@@ -43,14 +43,3 @@ resource "hcloud_server" "axion" {
     name = var.server_name
   }
 }
-
-# TODO: Volume backup
-
-resource "hcloud_volume" "axion-root" {
-  name              = var.volume_name
-  size              = var.volume_size
-  server_id         = hcloud_server.axion.id
-  automount         = true
-  format            = var.volume_format
-  delete_protection = false
-}
