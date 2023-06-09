@@ -23,7 +23,7 @@ jobs:
         id: build-image
         uses: docker/build-push-action@v2
         with:
-          context: ./dogsheep/Dockerfile
+          context: ./dogsheep/
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/dogsheep:latest
       - run: echo "Job is ${{ job.status }}."
