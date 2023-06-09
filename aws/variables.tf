@@ -23,7 +23,12 @@ variable "dogsheep_bucket" {
   default     = "dogsheep-db"
 }
 
-variable "ecr_name" {
+variable "pg_backup_ecr_name" {
   description = "AWS ECR repository name"
-  default     = "infra-cr"
+  default     = "pg_backup"
+}
+
+variable "dogsheep_ecr_name" {
+  description = "AWS ECR repository name"
+  default     = "dogsheep"
 }
