@@ -32,7 +32,6 @@ runcmd:
     echo 'id' >> /home/axn/.bash_profile
     echo 'ps x' >> /home/axn/.bash_profile
     chown axn:axn /home/axn/.bash_profile
-  - [ sed, -i, -e, '/^#Port/s/^.*$/Port 43/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PasswordAuthentication/s/^.*$/PasswordAuthentication no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#PubkeyAuthentication/s/^.*$/PubkeyAuthentication yes/', /etc/ssh/sshd_config ]
