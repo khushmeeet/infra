@@ -36,7 +36,9 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
       - name: Create docker dir
         run: |
-          ssh server 'mkdir -p docker'
+          ssh server 'mkdir -p ~/docker'
+          ssh server 'mkdir -p /var/yaml/datasette'
+          ssh server'mkdir -p /var/yaml/prometheus'
       - name: Copy docker-compose to HCloud
         run: |
           scp docker-compose.yml server:~/docker
