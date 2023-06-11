@@ -12,7 +12,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+      test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h postgres -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
       interval: 1m
       timeout: 10s
       retries: 5
@@ -21,7 +21,7 @@ services:
   postgres_exporter:
     image: prometheuscommunity/postgres-exporter:latest
     environment:
-      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@${POSTGRES_HOST}:5432/mydatabase?sslmode=disable
+      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@postgres:5432/mydatabase?sslmode=disable
     ports:
       - 9187:9187
 
@@ -29,8 +29,8 @@ services:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL:
+      PGADMIN_DEFAULT_PASSWORD:
     volumes:
       - pgadmin:/var/lib/pgadmin
     ports:
@@ -57,7 +57,7 @@ services:
     container_name: pg_backup
     image: ${PG_BACKUP_IMAGE_URI}
     environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_HOST: postgres
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}

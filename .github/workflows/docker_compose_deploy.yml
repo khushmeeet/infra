@@ -52,3 +52,11 @@ jobs:
             docker-compose pull
             docker-compose up --force-recreate --build -d
           EOF
+        env:
+          PG_BACKUP_IMAGE_URI: ${{ secrets.PG_BACKUP_IMAGE_URI }}
+          DATASETTE_IMAGE_URI: ${{ secrets.DATASETTE_IMAGE_URI }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASS: ${{ secrets.POSTGRES_PASS }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
