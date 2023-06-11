@@ -82,7 +82,7 @@ services:
       - 8001:8001
     volumes:
       - /var/datasette/dbs:/mnt/dbs
-      - /tmp/yaml/datasette:/mnt/metadata
+      - ~/mnt/yaml/datasette:/mnt/metadata
 
   portainer:
     image: portainer/portainer-ce
@@ -113,7 +113,7 @@ services:
     image: prom/prometheus:latest
     volumes:
       - prometheus-data:/prometheus
-      - /tmp/yaml/prometheus:/etc/prometheus/
+      - ~/mnt/yaml/prometheus:/etc/prometheus/
     command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090

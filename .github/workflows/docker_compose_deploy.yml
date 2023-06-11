@@ -37,13 +37,13 @@ jobs:
       - name: Create docker dir
         run: |
           ssh server 'mkdir -p ~/docker'
-          ssh server 'sudo mkdir -p /tmp/yaml/datasette'
-          ssh server 'sudo mkdir -p /tmp/yaml/prometheus'
+          ssh server 'mkdir -p ~/mnt/yaml/datasette'
+          ssh server 'mkdir -p ~/mnt/yaml/prometheus'
       - name: Copy docker-compose to HCloud
         run: |
           scp docker-compose.yml server:~/docker
-          scp metadata.yml server:/tmp/yaml/datasette
-          scp prometheus.yml server:/tmp/yaml/prometheus
+          scp metadata.yml server:~/mnt/yaml/datasette
+          scp prometheus.yml server:~/mnt/yaml/prometheus
         working-directory: docker-compose
       - name: Run compose in HCloud
         run: |
