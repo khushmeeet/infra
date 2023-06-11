@@ -35,10 +35,10 @@ jobs:
           platforms: linux/arm64
           tags: ${{ steps.login-ecr.outputs.registry }}/pg_backup:latest
           build-args: |
-            "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID}}"
-            "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}}"
-            "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION}}"
-            "POSTGRES_HOST=${{ secrets.POSTGRES_HOST}}"
-            "POSTGRES_USER=${{ secrets.POSTGRES_USER}}"
-            "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD}}"
+            "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}"
+            "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}"
+            "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}"
+            "POSTGRES_USER=${{ secrets.POSTGRES_USER }}"
+            "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
       - run: echo "Job is ${{ job.status }}."
