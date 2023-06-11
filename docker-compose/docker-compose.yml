@@ -55,7 +55,7 @@ services:
 
   pg_backup:
     container_name: pg_backup
-    image: ${IMAGE_URI}
+    image: ${PG_BACKUP_IMAGE_URI}
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -67,7 +67,8 @@ services:
     restart: always
 
   datasette:
-    image: axion-datasette
+    container_name: datasette
+    image: ${DATASETTE_IMAGE_URI}
     command:
       [
         "datasette",

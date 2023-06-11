@@ -11,6 +11,6 @@ COPY pg_backup.sh /pg_backup.sh
 RUN chmod +x /pg_backup.sh
 
 RUN touch /var/log/cron.log
-RUN (crontab -l ; echo "* * * * * /pg_backup.sh >> /var/log/cron.log") | crontab
+RUN (crontab -l ; echo "0 12 * * * /pg_backup.sh >> /var/log/cron.log") | crontab
 
 CMD cron && tail -f /var/log/cron.log
