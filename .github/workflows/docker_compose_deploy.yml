@@ -45,6 +45,26 @@ jobs:
           scp metadata.yml server:~/mnt/yaml/datasette
           scp prometheus.yml server:~/mnt/yaml/prometheus
         working-directory: docker-compose
+      - name: Prepare env file
+        run: |
+          cat >>~/.env <<END
+          PG_BACKUP_IMAGE_URI=$PG_BACKUP_IMAGE_URI
+          DATASETTE_IMAGE_URI=$DATASETTE_IMAGE_URI
+          POSTGRES_USER=$POSTGRES_USER
+          POSTGRES_PASS=$POSTGRES_PASS
+          POSTGRES_DB=$POSTGRES_DB
+          AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          END
+          scp ~/.env server:~/docker
+        env:
+          PG_BACKUP_IMAGE_URI: ${{ secrets.PG_BACKUP_IMAGE_URI }}
+          DATASETTE_IMAGE_URI: ${{ secrets.DATASETTE_IMAGE_URI }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASS: ${{ secrets.POSTGRES_PASS }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Run compose in HCloud
         run: |
           ssh server <<EOF
@@ -60,3 +80,10 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
           AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      - name: Sleep for 2 minutes while server reboots
+        run: sleep 2m
+        shell: bash
+      - name: Remove env file
+        run: |
+          ssh server 'rm ~/docker/.env'
+      - run: echo "Job is ${{ job.status }}."
