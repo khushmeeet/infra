@@ -23,6 +23,7 @@ jobs:
         id: build-image
         uses: docker/build-push-action@v2
         with:
+          platforms: linux/arm64
           context: ./dogsheep/
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/dogsheep:latest
