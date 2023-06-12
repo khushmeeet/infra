@@ -44,6 +44,7 @@ runcmd:
   - [ sh, -c, "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list" ]
   - [ apt, update, -y ]
   - [ apt, install, -y, tailscale, docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose ]
+  - [ python3, install, awscli ]
   - [ tailscale, up, --ssh, -authkey, ${tailscale_key} ]
   - [ ufw, allow, in, on, tailscale0 ]
   - [ ufw, enable ]

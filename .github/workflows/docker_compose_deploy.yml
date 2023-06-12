@@ -45,7 +45,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       - name: Amazon ECR login
         run: |
-          ssh server 'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_IMAGE_URL'
+          ssh server 'aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_IMAGE_URL'
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           ECR_IMAGE_URL: ${{ secrets.ECR_IMAGE_URL }}
