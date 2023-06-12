@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt -y update && apt -y upgrade
+RUN apt-get -y update && apt-get -y upgrade
 
 RUN pip3 install datasette
 RUN datasette install datasette-dashboards
@@ -14,7 +14,6 @@ RUN pip install py-gfm
 RUN pip install datasette-render-markdown
 RUN datasette install datasette-youtube-embed
 RUN datasette install datasette-geojson
-RUN pip install datasette-media pyheif
 RUN pip install datasette-copyable
 RUN datasette install datasette-configure-fts
 RUN pip install datasette-search-all
