@@ -38,20 +38,6 @@ services:
     depends_on:
       - db
     restart: always
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://127.0.0.1:80"
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 1m
 
   pg_backup:
     container_name: pg_backup
@@ -69,15 +55,6 @@ services:
   datasette:
     container_name: datasette
     image: ${DATASETTE_IMAGE_URI}
-    command:
-      [
-        "datasette",
-        "-h",
-        "0.0.0.0",
-        "/mnt/dbs",
-        "-m",
-        "/mnt/metadata/metadata.yml"
-      ]
     ports:
       - 8001:8001
     volumes:
