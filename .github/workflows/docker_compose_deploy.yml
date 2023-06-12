@@ -88,6 +88,9 @@ jobs:
         run: |
           ssh server <<EOF
             cd ~/docker
+            docker-compose stop
+            docker-compose rm -f
+            docker rmi $(docker images -a -q)
             docker-compose pull
             docker-compose up --force-recreate --build -d
           EOF
