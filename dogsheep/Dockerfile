@@ -1,5 +1,12 @@
-FROM datasetteproject/datasette:latest
+FROM python:latest
 
+ENV DEBIAN_FRONTEND=noninteractive
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt -y update && apt -y upgrade
+
+RUN pip3 install datasette
 RUN datasette install datasette-dashboards
 RUN datasette install datasette-chatgpt-plugin
 RUN datasette install datasette-simple-html
@@ -19,3 +26,7 @@ RUN datasette install datasette-geojson-map
 RUN datasette install datasette-cluster-map
 RUN datasette install dogsheep-beta
 RUN pip install datasette-vega
+
+EXPOSE 8001
+
+CMD ["datasette", "serve", "--host", "0.0.0.0", "--port", "8001", "/mnt/dbs", "-m", "/mnt/metadata/metadata.yml"]
