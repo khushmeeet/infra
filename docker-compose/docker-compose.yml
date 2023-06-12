@@ -55,6 +55,7 @@ services:
   datasette:
     container_name: datasette
     image: ${DATASETTE_IMAGE_URI}
+    restart: always
     ports:
       - 8001:8001
     volumes:
