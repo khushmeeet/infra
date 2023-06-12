@@ -21,7 +21,7 @@ services:
   postgres_exporter:
     image: prometheuscommunity/postgres-exporter:latest
     environment:
-      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@postgres:5432/mydatabase?sslmode=disable
+      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mydatabase?sslmode=disable
     ports:
       - 9187:9187
 

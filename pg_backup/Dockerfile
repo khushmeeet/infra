@@ -4,10 +4,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get -y update && apt-get install -y curl gnupg2
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-RUN curl --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
-RUN apt-get -y update; apt-get -y --no-install-recommends install cron python3-pip vim postgresql-contrib \
+RUN apt-get -y update && apt-get install -y dirmngr ca-certificates software-properties-common gnupg gnupg2 apt-transport-https curl -y
+RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /usr/share/keyrings/postgresql.gpg > /dev/null
+RUN echo deb [arch=amd64,arm64,ppc64el signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main | tee -a /etc/apt/sources.list.d/postgresql.list
+RUN apt-get -y update; apt-get -y --no-install-recommends install cron python3-pip vim postgresql-client-15 postgresql-15 \
     && apt-get -y --purge autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install awscli
