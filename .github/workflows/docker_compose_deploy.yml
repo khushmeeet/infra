@@ -45,8 +45,8 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       - name: Amazon ECR login
         run: |
-          ssh server 'export ECR_IMAGE_URL=$ECR_IMAGE_URL; \
-           aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_IMAGE_URL'
+          ssh server 'export ECR_IMAGE_URL=${{ secrets.ECR_IMAGE_URL }}; \
+           aws ecr get-login-password | docker login --username AWS --password-stdin ${{ secrets.ECR_IMAGE_URL }}'
         env:
           ECR_IMAGE_URL: ${{ secrets.ECR_IMAGE_URL }}
       - name: Create docker dir
