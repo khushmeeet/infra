@@ -59,7 +59,7 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - /var/datasette/dbs:/mnt/dbs
+      - ~/mnt/dogsheep/dbs:/mnt/dbs
       - ~/mnt/yaml/datasette:/mnt/metadata
 
   portainer:
