@@ -4,3 +4,4 @@ secrets.tfvars
 *.tfstate
 *.tfstate.*
 */plan
+creds.sh

@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+source ~/creds.sh
+export PATH=/usr/local/bin:$PATH
 
 current_year=$(date +%Y)
 current_month=$(date +%m)

@@ -12,10 +12,11 @@ RUN apt-get -y update; apt-get -y --no-install-recommends install cron python3-p
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install awscli
 
-COPY pg_backup.sh /pg_backup.sh
-RUN chmod +x /pg_backup.sh
+COPY pg_backup.sh ~/pg_backup.sh
+COPY creds.sh ~/creds.sh
+RUN chmod +x ~/pg_backup.sh
 
 RUN touch /var/log/cron.log
-RUN (crontab -l ; echo "0 12 * * * /pg_backup.sh >> /var/log/cron.log") | crontab
+RUN (crontab -l ; echo "0 12 * * * ~/pg_backup.sh >> /var/log/cron.log") | crontab
 
 CMD cron && tail -f /var/log/cron.log
