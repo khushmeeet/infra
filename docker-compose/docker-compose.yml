@@ -91,12 +91,6 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000" ]
-      interval: 1m
-      timeout: 10s
-      retries: 5
-      start_period: 40s
 
 volumes:
   pgdata:
