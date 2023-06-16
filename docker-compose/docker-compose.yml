@@ -52,15 +52,15 @@ services:
       - db
     restart: always
 
-  datasette:
-    container_name: datasette
+  dogsheep:
+    container_name: dogsheep
     image: ${DATASETTE_IMAGE_URI}
     restart: always
     ports:
       - 8001:8001
     volumes:
       - ~/mnt/dogsheep/dbs:/mnt/dbs
-      - ~/mnt/yaml/datasette:/mnt/metadata
+      - ~/mnt/yaml/dogsheep:/mnt/metadata
 
   portainer:
     image: portainer/portainer-ce
