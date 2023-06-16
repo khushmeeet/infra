@@ -41,7 +41,7 @@ jobs:
           ssh server 'export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}'
       - name: Amazon ECR login
         run: |
-          ssh server 'aws ecr get-login-password | docker login --username AWS --password-stdin ${{ secrets.ECR_IMAGE_URL }}'
+          ssh server 'aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_IMAGE_URL }}'
       - name: Create docker dir
         run: |
           ssh server 'mkdir -p ~/docker'
