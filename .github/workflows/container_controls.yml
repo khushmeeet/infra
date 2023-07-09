@@ -1,0 +1,86 @@
+name: Container Controls
+run-name: Container Controls
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        type: choice
+        description: Service name
+        options:
+        - postgres
+        - postgres_exporter
+        - pgadmin
+        - pg_backup
+        - dogsheep
+        - portainer
+        - prometheus
+        - grafana
+      control:
+        type: choice
+        description: Control type
+        options:
+        - restart
+        - upgrade
+        - stop
+env:
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+jobs:
+  control:
+    name: Container Control
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job is running on ${{ runner.os }}"
+      - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - name: Tailscale
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_EPHEMERAL_KEY }}
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >>~/.ssh/config <<END
+          Host server
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+      - name: Container Restart
+        run: |
+          ssh server <<EOF
+            cd ~/docker
+            docker-compose stop ${{ github.events.input.service }}
+            docker-compose up -d ${{ github.events.input.service }}
+          EOF
+        if: ${{ github.events.input.control }} == 'restart'
+      - name: Container Upgrade
+        run: |
+          ssh server <<EOF
+            cd ~/docker
+            docker-compose stop ${{ github.events.input.service }}
+            docker-compose rm ${{ github.events.input.service }}
+            docker-compose pull ${{ github.events.input.service }}
+            docker-compose up -d ${{ github.events.input.service }}
+          EOF
+        if: ${{ github.events.input.control }} == 'upgrade'
+      - name: Container Stop
+        run: |
+          ssh server <<EOF
+            cd ~/docker
+            docker-compose stop ${{ github.events.input.service }}
+          EOF
+        if: ${{ github.events.input.control }} == 'stop'
+      - name: Sleep for 1 minutes while container becomes healthy
+        run: sleep 1m
+        shell: bash
+      - run: echo "Job is ${{ job.status }}."
