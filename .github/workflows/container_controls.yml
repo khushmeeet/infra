@@ -63,7 +63,7 @@ jobs:
             docker-compose stop ${{ github.event.inputs.service }}
             docker-compose up -d ${{ github.event.inputs.service }}
           EOF
-        if: ${{ github.events.inputs.control == 'restart' }}
+        if: ${{ github.events.inputs.control == restart }}
       - name: Container Upgrade
         run: |
           ssh server <<EOF
@@ -73,14 +73,14 @@ jobs:
             docker-compose pull ${{ github.event.inputs.service }}
             docker-compose up -d ${{ github.event.inputs.service }}
           EOF
-        if: ${{ github.event.inputs.control == 'upgrade' }}
+        if: ${{ github.event.inputs.control == upgrade }}
       - name: Container Stop
         run: |
           ssh server <<EOF
             cd ~/docker
             docker-compose stop ${{ github.event.inputs.service }}
           EOF
-        if: ${{ github.event.inputs.control == 'stop' }}
+        if: ${{ github.event.inputs.control == stop }}
       - name: Sleep for 1 minutes while container becomes healthy
         run: sleep 1m
         shell: bash
