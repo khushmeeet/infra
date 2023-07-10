@@ -33,7 +33,7 @@ jobs:
     steps:
       - run: echo "Job is running on ${{ runner.os }}"
       - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
-      - run: echo "Input parameters - ${{ github.event.input.control }} | ${{ github.event.input.service }} "
+      - run: echo "Input parameters - ${{ github.event.inputs.control }} | ${{ github.event.inputs.service }} "
       - name: Tailscale
         uses: tailscale/github-action@v1
         with:
@@ -60,27 +60,27 @@ jobs:
         run: |
           ssh server <<EOF
             cd ~/docker
-            docker-compose stop ${{ github.event.input.service }}
-            docker-compose up -d ${{ github.event.input.service }}
+            docker-compose stop ${{ github.event.inputs.service }}
+            docker-compose up -d ${{ github.event.inputs.service }}
           EOF
-        if: github.events.input.control == 'restart'
+        if: github.events.inputs.control == 'restart'
       - name: Container Upgrade
         run: |
           ssh server <<EOF
             cd ~/docker
-            docker-compose stop ${{ github.event.input.service }}
-            docker-compose rm ${{ github.event.input.service }}
-            docker-compose pull ${{ github.event.input.service }}
-            docker-compose up -d ${{ github.event.input.service }}
+            docker-compose stop ${{ github.event.inputs.service }}
+            docker-compose rm ${{ github.event.inputs.service }}
+            docker-compose pull ${{ github.event.inputs.service }}
+            docker-compose up -d ${{ github.event.inputs.service }}
           EOF
-        if: github.event.input.control == 'upgrade'
+        if: github.event.inputs.control == 'upgrade'
       - name: Container Stop
         run: |
           ssh server <<EOF
             cd ~/docker
-            docker-compose stop ${{ github.event.input.service }}
+            docker-compose stop ${{ github.event.inputs.service }}
           EOF
-        if: ${{ github.event.input.control }} == 'stop'
+        if: ${{ github.event.inputs.control }} == 'stop'
       - name: Sleep for 1 minutes while container becomes healthy
         run: sleep 1m
         shell: bash
