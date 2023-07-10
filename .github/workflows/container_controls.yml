@@ -33,6 +33,7 @@ jobs:
     steps:
       - run: echo "Job is running on ${{ runner.os }}"
       - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - run: echo "Input parameters - ${{ github.events.input.control }} | ${{ github.events.input.service }} "
       - name: Tailscale
         uses: tailscale/github-action@v1
         with:
