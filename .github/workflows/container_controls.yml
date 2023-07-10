@@ -62,7 +62,7 @@ jobs:
             docker-compose stop ${{ github.events.input.service }}
             docker-compose up -d ${{ github.events.input.service }}
           EOF
-        if: ${{ github.events.input.control }} == 'restart'
+        if: github.events.input.control == 'restart'
       - name: Container Upgrade
         run: |
           ssh server <<EOF
@@ -72,7 +72,7 @@ jobs:
             docker-compose pull ${{ github.events.input.service }}
             docker-compose up -d ${{ github.events.input.service }}
           EOF
-        if: ${{ github.events.input.control }} == 'upgrade'
+        if: github.events.input.control == 'upgrade'
       - name: Container Stop
         run: |
           ssh server <<EOF
