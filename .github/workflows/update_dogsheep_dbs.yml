@@ -1,0 +1,59 @@
+name: Update Dogsheep DBs
+run-name: Update Dogsheep DBs
+on: workflow_dispatch
+env:
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+jobs:
+  sqlite:
+    name: Update sqlite files
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job is running on ${{ runner.os }}"
+      - run: echo "Branch name is ${{ github.ref }} and repository is ${{ github.repository }}."
+      - name: Tailscale
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_EPHEMERAL_KEY }}
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >>~/.ssh/config <<END
+          Host server
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Copy files from s3
+        run: |
+          ssh server <<EOF
+            aws s3 sync s3://dogsheep-db ~/mnt/dogsheep/dbs/
+          EOF
+      - name: Restart dogsheep
+        run: |
+          ssh server <<EOF
+            cd ~/docker
+            docker-compose stop dogsheep
+            sleep 30s
+            docker-compose up -d dogsheep
+          EOF
+      - name: Sleep for 1 minutes while container becomes healthy
+        run: sleep 1m
+        shell: bash
+      - run: echo "Job is ${{ job.status }}."
