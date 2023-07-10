@@ -7,7 +7,7 @@ on:
         type: choice
         description: Service name
         options:
-        - postgres
+        - db
         - postgres_exporter
         - pgadmin
         - pg_backup
