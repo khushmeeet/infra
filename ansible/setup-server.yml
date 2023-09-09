@@ -1,0 +1,49 @@
+---
+- hosts: all
+  tasks:
+    - name: Update APT repo and cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages to the latest version
+      apt:
+        upgrade: yes
+
+    - name: Install specified packages
+      apt:
+        name:
+          - wget
+          - gpg
+          - coreutils
+
+    - name: Install Docker
+      block:
+        - name: Ensure /etc/apt/keyrings directory exists with correct permissions
+          file:
+            path: /etc/apt/keyrings
+            state: directory
+            mode: '0755'
+
+        - name: Download and dearmor the Docker GPG key
+          command:
+            cmd: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg"
+            warn: no
+
+        - name: Set permissions for docker.gpg
+          file:
+            path: /etc/apt/keyrings/docker.gpg
+            state: file
+            mode: '0644'
+
+        - name: Update APT cache
+          apt:
+            update_cache: yes
+
+        - name: Install specified packages
+          apt:
+            name:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+            state: present
+            update_cache: yes
