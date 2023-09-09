@@ -54,7 +54,7 @@
             state: present
             update_cache: true
 
-    - name: Install Nomad
+    - name: Install Nomad and Consul
       block:
         - name: Add Hashicorp GPG key
           command:
@@ -73,6 +73,11 @@
         - name: Install Nomad
           apt:
             name: nomad
+            state: present
+
+        - name: Install Consul
+          apt:
+            name: consul
             state: present
 
     - name: Install AWS CLI
