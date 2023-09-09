@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Axion server setup
+  hosts: all
   tasks:
     - name: Update APT repo and cache
       apt:
