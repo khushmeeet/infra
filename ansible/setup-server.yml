@@ -4,15 +4,15 @@
   vars_files:
     - vars.yml
   tasks:
-    - ansible.builtin.name: Update APT repo and cache
+    - name: Update APT repo and cache
       apt:
         update_cache: true
 
-    - ansible.builtin.name: Upgrade all packages to the latest version
+    - name: Upgrade all packages to the latest version
       apt:
         upgrade: true
 
-    - ansible.builtin.name: Install specified packages
+    - name: Install specified packages
       apt:
         name:
           - wget
@@ -21,33 +21,33 @@
 
     - name: Install Docker
       block:
-        - ansible.builtin.name: Ensure /etc/apt/keyrings directory exists with correct permissions
+        - name: Ensure /etc/apt/keyrings directory exists with correct permissions
           file:
             path: /etc/apt/keyrings
             state: directory
             mode: '0755'
 
-        - ansible.builtin.name: Download and dearmor the Docker GPG key
+        - name: Download and dearmor the Docker GPG key
           command:
             cmd: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg"
             warn: false
 
-        - ansible.builtin.name: Set permissions for docker.gpg
+        - name: Set permissions for docker.gpg
           file:
             path: /etc/apt/keyrings/docker.gpg
             state: file
             mode: '0644'
 
-        - ansible.builtin.name: Add Docker linux repo
+        - name: Add Docker linux repo
           command:
             cmd:  echo "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
             warn: false
 
-        - ansible.builtin.name: Update APT cache
+        - name: Update APT cache
           apt:
             update_cache: true
 
-        - ansible.builtin.name: Install specified packages
+        - name: Install specified packages
           apt:
             name:
               - docker-ce
@@ -58,76 +58,135 @@
 
     - name: Install Nomad and Consul
       block:
-        - ansible.builtin.name: Add Hashicorp GPG key
+        - name: Add Hashicorp GPG key
           command:
             cmd: wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
             warn: false
 
-        - ansible.builtin.name: Add official Hashicorp linux repo
+        - name: Add official Hashicorp linux repo
           command:
             cmd: echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
             warn: false
 
-        - ansible.builtin.name: Update APT cache
+        - name: Update APT cache
           apt:
             update_cache: true
 
-        - ansible.builtin.name: Install Nomad
+        - name: Install Nomad
           apt:
             name: nomad
             state: present
 
-        - ansible.builtin.name: Install Consul
+        - name: Install Consul
           apt:
             name: consul
             state: present
 
-    - ansible.builtin.name: Install AWS CLI
+    - name: Install AWS CLI
       pip:
         name: awscli
         executable: pip3
 
     - name: Setup Nomad cluster
       block:
-        - ansible.builtin.name: Create nomad config dir
+        - name: Create nomad config dir
           file:
             path: "{{ nomad_config_dir }}"
             state: directory
             mode: '0755'
 
-        - ansible.builtin.name: Create nomad data dir
+        - name: Create nomad data dir
           file:
             path: "{{ nomad_data_dir }}"
             state: directory
             mode: '0755'
 
-        - ansible.builtin.name: Copy systemd service file
+        - name: Copy nomad config file
           copy:
-            src: data-files/nomad.service
-            dest: /etc/systemd/system/nomad.service
+            src: data-files/nomad.hcl
+            dest: "{{ nomad_config_dir }}/nomad.hcl"
             owner: axn
             group: axn
             mode: '0644'
 
+        - name: Uncomment line Wants=consul.service
+          lineinfile:
+            path: /usr/lib/systemd/system/nomad.service
+            regexp: '^#(Wants=consul.service)'
+            line: 'Wants=consul.service'
+            state: present
+
+        - name: Uncomment line After=consul.service
+          lineinfile:
+            path: /usr/lib/systemd/system/nomad.service
+            regexp: '^#(After=consul.service)'
+            line: 'After=consul.service'
+            state: present
+
         - name: Start Nomad cluster
           block:
-            - ansible.builtin.name: Enable nomad service
+            - name: Enable nomad service
               systemd:
                 name: nomad
                 enabled: true
 
-            - ansible.builtin.name: Start nomad service
+            - name: Start nomad service
               systemd:
                 name: nomad
                 state: started
 
-            - ansible.builtin.name: Check nomad service status
+            - name: Check nomad service status
               command:
                 cmd: systemctl status nomad
               register: service_status
               changed_when: false
               ignore_errors: true
 
-            - ansible.builtin.name: Display nomad service status
+            - name: Display nomad service status
+              debug:
+                var: service_status.stdout_lines
+
+    - name: Setup Consul
+      block:
+        - name: Create nomad config dir
+          file:
+            path: "{{ consul_config_dir }}"
+            state: directory
+            mode: '0755'
+
+        - name: Create nomad data dir
+          file:
+            path: "{{ consul_data_dir }}"
+            state: directory
+            mode: '0755'
+
+        - name: Copy consul config file
+          copy:
+            src: data-files/consul.hcl
+            dest: "{{ consul_config_dir }}/consul.hcl"
+            owner: axn
+            group: axn
+            mode: '0644'
+
+        - name: Start Consul
+          block:
+            - name: Enable consul
+              systemd:
+                name: consul
+                enabled: true
+
+            - name: Start consul
+              systemd:
+                name: consul
+                state: started
+
+            - name: Check consul status
+              command:
+                cmd: systemctl status consul
+              register: service_status
+              changed_when: false
+              ignore_errors: true
+
+            - name: Display consul service status
               debug:
                 var: service_status.stdout_lines
