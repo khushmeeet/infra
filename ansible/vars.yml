@@ -1,0 +1,4 @@
+nomad_config_dir: /etc/nomad.d/
+nomad_data_dir: /opt/nomad/
+consul_config_dir: /etc/consul.d/
+consul_data_dir: /opt/consul/

@@ -39,3 +39,23 @@ jobs:
         run: sleep 2m
         shell: bash
       - run: echo "Job is ${{ job.status }}."
+
+  ansible:
+    name: Setup Nomad & Consul
+    needs: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          python -m pip install --upgrade pip
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook ansible/setup-server.yml
