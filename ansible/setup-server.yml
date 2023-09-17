@@ -129,6 +129,13 @@
             mode: '0644'
           become: true
 
+        - name: Allow traffic on port 4646
+          ufw:
+            rule: allow
+            port: '4646'
+            proto: tcp
+          become: true
+
         - name: Start Nomad cluster
           block:
             - name: Enable nomad service
