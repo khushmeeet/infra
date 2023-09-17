@@ -12,6 +12,10 @@ client {
   servers = [ "127.0.0.1" ]
 }
 
+ui {
+  enabled = true
+}
+
 telemetry {
   collection_interval = "1s"
   disable_hostname = true
