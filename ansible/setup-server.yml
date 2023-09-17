@@ -148,6 +148,7 @@
             - name: Command output
               debug:
                 var: output.stdout_lines
+              become: true
 
             - name: Start nomad service
               systemd:
@@ -159,6 +160,7 @@
             - name: Command output
               debug:
                 var: output.stdout_lines
+              become: true
 
             - name: Check nomad service status
               command:
