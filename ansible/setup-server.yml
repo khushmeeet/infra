@@ -32,7 +32,11 @@
 
         - name: Download and dearmor the Docker GPG key
           shell:
-            cmd: sudo rm -f /etc/apt/keyrings/docker.gpg && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            cmd: >
+              sudo rm -f /etc/apt/keyrings/docker.gpg && curl -fsSL https://download.docker.com/linux/ubuntu/gpg
+              | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          register: out
+          changed_when: out.rc != 0
 
         - name: Set permissions for docker.gpg
           file:
@@ -41,8 +45,12 @@
             mode: '0644'
 
         - name: Add Docker linux repo
-          shell:
-            cmd:  echo "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          shell: >
+            echo "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg]
+            https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable"
+            | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          register: out
+          changed_when: out.rc != 0
 
         - name: Update APT cache
           apt:
@@ -58,21 +66,23 @@
             state: present
             update_cache: true
           become: true
-          register: output
-
-        - name: Command output
-          debug:
-            var: output.stdout_lines
 
     - name: Install Nomad
       block:
         - name: Add Hashicorp GPG key
-          shell:
-            cmd: sudo rm -f /usr/share/keyrings/hashicorp-archive-keyring.gpg && wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          shell: >
+            sudo rm -f /usr/share/keyrings/hashicorp-archive-keyring.gpg && wget -O- https://apt.releases.hashicorp.com/gpg
+            | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          register: out
+          changed_when: out.rc != 0
 
         - name: Add official Hashicorp linux repo
-          shell:
-            cmd: echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          shell: >
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg]
+            https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+            | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          register: out
+          changed_when: out.rc != 0
 
         - name: Update APT cache
           apt:
@@ -84,15 +94,6 @@
             name: nomad
             state: present
           become: true
-          register: output
-
-        - name: Command output
-          debug:
-            var: output.stdout_lines
-
-        - name: Command output
-          debug:
-            var: output.stdout_lines
 
     - name: Install AWS CLI
       pip:
@@ -142,24 +143,12 @@
               systemd:
                 name: nomad
                 enabled: true
-              register: output
-              become: true
-
-            - name: Command output
-              debug:
-                var: output.stdout_lines
               become: true
 
             - name: Start nomad service
               systemd:
                 name: nomad
                 state: started
-              register: output
-              become: true
-
-            - name: Command output
-              debug:
-                var: output.stdout_lines
               become: true
 
             - name: Check nomad service status
