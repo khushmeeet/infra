@@ -70,7 +70,7 @@ jobs:
           echo "$SSH_KEY" > ~/.ssh/server.key
           chmod 600 ~/.ssh/server.key
           cat >>~/.ssh/config <<END
-          Host axion-1
+          Host server
             HostName $SSH_HOST
             User $SSH_USER
             IdentityFile ~/.ssh/server.key
@@ -82,7 +82,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
       - name: Test SSH connectivity
-        run: ssh -i ~/.ssh/server.key axion-1 echo "Hello World"
+        run: ssh -i ~/.ssh/server.key server echo "Hello World"
 
       - name: Run Ansible Playbook
         run: |
