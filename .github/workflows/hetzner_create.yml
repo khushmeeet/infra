@@ -81,6 +81,9 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
+      - name: Test SSH connectivity
+        run: ssh -i ~/.ssh/server.key axion-1 echo "Hello World"
+
       - name: Run Ansible Playbook
         run: |
           ansible-playbook ansible/setup-server.yml -i ansible/inventory.ini
