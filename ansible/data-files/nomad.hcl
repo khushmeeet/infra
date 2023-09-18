@@ -16,6 +16,11 @@ server {
 client {
   enabled = true
   servers = [ "127.0.0.1" ]
+
+  host_volume "postgres_data" {
+    path      = "/var/lib/nomad/postgresql/"
+    read_only = false
+  }
 }
 
 ui {
