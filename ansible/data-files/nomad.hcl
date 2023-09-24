@@ -21,6 +21,11 @@ client {
     path      = "/var/lib/nomad/postgresql/"
     read_only = false
   }
+
+  host_volume "pgadmin_data" {
+    path      = "/var/lib/nomad/pgadmin/"
+    read_only = false
+  }
 }
 
 ui {

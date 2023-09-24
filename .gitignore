@@ -6,3 +6,5 @@ secrets.tfvars
 */plan
 .vscode/
 creds.sh
+.vscode
+.idea
