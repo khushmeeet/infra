@@ -1,4 +1,4 @@
-job "postgres" {
+job "pgadmin" {
   datacenter = "dc-1"
   region = "global"
   type = "service"
@@ -32,7 +32,7 @@ job "postgres" {
       }
     }
 
-    task "postgres" {
+    task "pgadmin" {
       driver = "docker"
 
       config {
@@ -41,7 +41,7 @@ job "postgres" {
       }
 
       volume_mount {
-        volume = "postgres"
+        volume = "pgadmin"
         destination = "/var/lib/pgadmin/data"
       }
 
