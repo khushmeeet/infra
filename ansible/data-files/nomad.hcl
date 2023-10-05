@@ -26,6 +26,11 @@ client {
     path      = "/var/lib/nomad/pgadmin/"
     read_only = false
   }
+
+  host_volume "dogsheep_data" {
+    path      = "/var/lib/nomad/dogsheep/"
+    read_only = false
+  }
 }
 
 ui {
