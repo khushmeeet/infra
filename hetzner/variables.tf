@@ -29,7 +29,7 @@ variable "server_image" {
 
 variable "server_type" {
   description = "Type of instance based on CPU and RAM"
-  default     = "cax11"
+  default     = "cax21"
 }
 
 variable "volume_name" {
