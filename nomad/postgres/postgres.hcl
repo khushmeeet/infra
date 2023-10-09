@@ -1,63 +1,65 @@
 job "postgres" {
-    datacenter = "dc-1"
-    region = "global"
-    type = "service"
+  datacenters = ["dc-1"]
+  region      = "global"
+  type        = "service"
 
-    group "postgres" {
-        count = 1
-        
-        network {
-            port "postgres" {
-                to = 5432
-            }
-        }
+  group "postgres" {
+    count = 1
 
-        volume "postgres" {
-            type            = "host"
-            source          = "postgres_data"
-            read_only       = false
-        }
+    network {
+      port "postgres" {
+        to = 5432
+      }
+    }
 
-        service {
-            name = "postgres"
-            port = "postgres"
-            provider = "nomad"
-            
-            check {
-                type     = "tcp"
-                port     = "postgres"
-                interval = "10s"
-                timeout  = "30s"
-            }
-        }
+    volume "postgres" {
+      type      = "host"
+      source    = "postgres_data"
+      read_only = false
+    }
 
-        task "postgres" {
-            driver = "docker"
+    service {
+      name     = "postgres"
+      port     = "postgres"
+      provider = "nomad"
 
-            config {
-                image = "postgres:latest"
-                ports = ["postgres"]
-            }
+      check {
+        type     = "tcp"
+        port     = "postgres"
+        interval = "10s"
+        timeout  = "30s"
+      }
+    }
 
-            volume_mount {
-                volume = "postgres"
-                destination = "/var/lib/postgresql/data"
-            }
+    task "postgres" {
+      driver = "docker"
 
-            template {
-                env = true
-                data = <<EOH
+      config {
+        image = "postgres:latest"
+        ports = ["postgres"]
+      }
+
+      volume_mount {
+        volume      = "postgres"
+        destination = "/var/lib/postgresql/data"
+      }
+
+      template {
+        destination = "secrets.env"
+        env         = true
+        change_mode = "restart"
+        data        = <<EOH
                 {{ with nomadVar "nomad/jobs/postgres" }}
                 POSTGRES_PASSWORD={{.POSTGRES_PASSWORD}}
                 POSTGRES_USER={{.POSTGRES_USER}}
                 POSTGRES_DB={{.POSTGRES_DB}}
                 {{ end }}
                 EOH
-            }
+      }
 
-            logs {
-                max_files = 1
-            }
-        }
+      logs {
+        max_files = 1
+      }
     }
+  }
 }

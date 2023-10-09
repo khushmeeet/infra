@@ -1,13 +1,13 @@
 job "pg_backup" {
-  datacenter = "dc-1"
-  region = "global"
-  type = "service"
+  datacenters = ["dc-1"]
+  region      = "global"
+  type        = "service"
 
   group "pg_backup" {
     count = 1
 
     service {
-      name = "pg_backup"
+      name     = "pg_backup"
       provider = "nomad"
     }
 
@@ -19,8 +19,10 @@ job "pg_backup" {
       }
 
       template {
-        env = true
-        data = <<EOH
+        destination = "secrets.env"
+        env         = true
+        change_mode = "restart"
+        data        = <<EOH
         {{ with nomadVar "nomad/jobs/pg_backup" }}
         POSTGRES_HOST={{.POSTGRES_HOST}}
         POSTGRES_PASSWORD={{.POSTGRES_PASSWORD}}

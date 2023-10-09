@@ -1,7 +1,7 @@
 job "dogsheep" {
-  datacenter = "dc-1"
-  region = "global"
-  type = "service"
+  datacenters = ["dc-1"]
+  region      = "global"
+  type        = "service"
 
   group "dogsheep" {
     count = 1
@@ -13,14 +13,14 @@ job "dogsheep" {
     }
 
     volume "dogsheep" {
-      type            = "host"
-      source          = "dogsheep_data"
-      read_only       = false
+      type      = "host"
+      source    = "dogsheep_data"
+      read_only = false
     }
 
     service {
-      name = "dogsheep"
-      port = "dogsheep"
+      name     = "dogsheep"
+      port     = "dogsheep"
       provider = "nomad"
 
       check {
@@ -41,13 +41,15 @@ job "dogsheep" {
       }
 
       volume_mount {
-        volume = "dogsheep"
+        volume      = "dogsheep"
         destination = "/var/lib/dogsheep/data"
       }
 
       template {
-        env = true
-        data = <<EOH
+        destination = "secrets.env"
+        env         = true
+        change_mode = "restart"
+        data        = <<EOH
         {{ with nomadVar "nomad/jobs/postgres" }}
         POSTGRES_PASSWORD={{.POSTGRES_PASSWORD}}
         POSTGRES_USER={{.POSTGRES_USER}}
