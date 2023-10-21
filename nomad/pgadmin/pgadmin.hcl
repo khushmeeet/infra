@@ -1,7 +1,7 @@
 job "pgadmin" {
-  datacenter = "dc-1"
-  region = "global"
-  type = "service"
+  datacenters = ["dc-1"]
+  region      = "global"
+  type        = "service"
 
   group "pgadmin" {
     count = 1
@@ -13,14 +13,14 @@ job "pgadmin" {
     }
 
     volume "pgadmin" {
-      type            = "host"
-      source          = "pgadmin_data"
-      read_only       = false
+      type      = "host"
+      source    = "pgadmin_data"
+      read_only = false
     }
 
     service {
-      name = "pgadmin"
-      port = "pgadmin"
+      name     = "pgadmin"
+      port     = "pgadmin"
       provider = "nomad"
 
       check {
@@ -41,13 +41,15 @@ job "pgadmin" {
       }
 
       volume_mount {
-        volume = "pgadmin"
+        volume      = "pgadmin"
         destination = "/var/lib/pgadmin/data"
       }
 
       template {
-        env = true
-        data = <<EOH
+        destination = "secrets.env"
+        env         = true
+        change_mode = "restart"
+        data        = <<EOH
         {{ with nomadVar "nomad/jobs/pgadmin" }}
         PGADMIN_DEFAULT_EMAIL={{.PGADMIN_DEFAULT_EMAIL}}
         PGADMIN_DEFAULT_PASSWORD={{.PGADMIN_DEFAULT_PASSWORD}}
